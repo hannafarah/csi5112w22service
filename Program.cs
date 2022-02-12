@@ -9,7 +9,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       builder =>
                       {
-                          builder.WithOrigins("http://csi5112lec5.s3-website-us-east-1.amazonaws.com/");
+                          builder.WithOrigins("http://csi5112lec5.s3-website-us-east-1.amazonaws.com/")
+                            .AllowAnyHeader();
                       });
 });
 
