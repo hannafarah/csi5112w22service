@@ -11,14 +11,17 @@ jobs:
 
     steps:
       
-    - name: Docker build
-      run: docker build -t latest ./
-      
     - name: Docker login
       uses: docker/login-action@v1
       with:
         username: hfarah
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
-    - name: Push container
-      run: docker push hfarah/csi5112lec5:latest
+        
+    - name: Docker build and push
+      uses: docker/build-push-action@v2
+      with:
+        context: ${{ env.GITHUB_WORKSPACE }}
+        file: ${{ env.GITHUB_WORKSPACE }}/Dockerfile
+        tags: hfarah/csi5112lec5:latest
+        push: true
+    
