@@ -12,10 +12,13 @@ jobs:
     steps:
       
     - name: Docker build
-      run: docker build -t latest ${{ env.GITHUB_WORKSPACE }}/csi5112w22service/
+      run: docker build -t latest ./
       
     - name: Docker login
-      run: docker login -u hfarah --password ${{ secrets.DOCKERHUB_TOKEN }}
+      uses: docker/login-action@v1
+      with:
+        username: hfarah
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
       
     - name: Push container
       run: docker push hfarah/csi5112lec5:latest
