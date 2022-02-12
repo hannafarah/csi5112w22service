@@ -12,7 +12,7 @@ jobs:
     steps:
       
     - name: Docker build
-      run: docker build -t latest .
+      run: docker build -t latest ./csi5112w22service/
       
     - name: Docker login
       run: docker login -u hfarah --password ${{ secrets.DOCKERHUB_TOKEN }}
