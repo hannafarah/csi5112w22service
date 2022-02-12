@@ -33,6 +33,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();
+// useCors must be after use routing and before use authorization
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseHttpsRedirection();
