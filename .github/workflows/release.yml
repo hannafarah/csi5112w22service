@@ -1,8 +1,8 @@
 name: .NET
 
 on:
-  push:
-    branches: [ main ]
+  release:
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,3 +21,12 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+      
+    - name: Docker build
+      run: docker build -t latest .
+      
+    - name: Docker login
+      run: docker login -u hfarah --password ${{ secrets.DOCKERHUB_TOKEN }}
+      
+    - name: Push container
+      run: docker push hfarah/csi5112lec5:latest
