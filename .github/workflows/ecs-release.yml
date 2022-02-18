@@ -2,12 +2,14 @@ name: ECS Release
 
 on:
   workflow_dispatch:
+  release: 
+    types: created
 
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: 336929397355.dkr.ecr.us-east-1.amazonaws.com
-  ECS_SERVICE: CSI5112TestService
-  ECS_CLUSTER: CSI5112test
+  ECS_SERVICE: CSI5112lec6TestService
+  ECS_CLUSTER: CSI5112lec6
 
 jobs:
   build:
@@ -26,8 +28,8 @@ jobs:
         
     - name: Docker build
       run: |
-        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 336929397355.dkr.ecr.us-east-1.amazonaws.com
-        docker build -t csi5112test .
-        docker tag csi5112test:latest 336929397355.dkr.ecr.us-east-1.amazonaws.com/csi5112test:latest
-        docker push 336929397355.dkr.ecr.us-east-1.amazonaws.com/csi5112test:latest
+        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 336929397355.dkr.ecr.us-east-1.amazonaws.com
+        docker build -t csi5112lec6 .
+        docker tag csi5112lec6:latest 336929397355.dkr.ecr.us-east-1.amazonaws.com/csi5112lec6:latest
+        docker push 336929397355.dkr.ecr.us-east-1.amazonaws.com/csi5112lec6:latest
         aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --force-new-deployment --region $AWS_REGION
