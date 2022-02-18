@@ -26,6 +26,7 @@ jobs:
         
     - name: Docker build
       run: |
+        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 336929397355.dkr.ecr.us-east-1.amazonaws.com
         docker build -t csi5112test .
         docker tag csi5112test:latest 336929397355.dkr.ecr.us-east-1.amazonaws.com/csi5112test:latest
         docker push 336929397355.dkr.ecr.us-east-1.amazonaws.com/csi5112test:latest
