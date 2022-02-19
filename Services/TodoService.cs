@@ -4,9 +4,9 @@ namespace csi5112lec4b.services;
 public class TodoService {
     // Data placeholder
     private List<Todo> todos = new List<Todo> () {
-        new Todo("1", "Complete service project", "Work 2 days to finish this project", false),
-        new Todo("2", "Bing watch series", "Finish series ... over the weekend", false),
-        new Todo("3", "Exercise", "Finish 30 min of exercise", false)
+        new Todo("1", "Complete service project", "Work 2 days to finish this project", true),
+        new Todo("2", "Bing watch series", "Finish series ... over the weekend", true),
+        new Todo("3", "Exercise", "Finish 30 min of exercise", true)
     };
 
     public TodoService() {
