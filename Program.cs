@@ -1,3 +1,4 @@
+using csi5112lec4b.models;
 using csi5112lec4b.services;
 
 var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -13,14 +14,23 @@ builder.Services.AddCors(options =>
                       });
 });
 
-// Add services to the container.
+// Add services and controllers to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(
+        options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.Configure<TodoDatabaseSettings>(
+                builder.Configuration.GetSection(nameof(TodoDatabaseSettings)));
+
 // Add our services for DI
+var options = builder.Configuration.GetSection(nameof(TodoDatabaseSettings)).Get<TodoDatabaseSettings>();
+builder.Services.AddSingleton<TodoDatabaseSettings>(options);
+
 builder.Services.AddSingleton<TodoService>();
 
 var app = builder.Build();

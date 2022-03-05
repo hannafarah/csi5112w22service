@@ -1,6 +1,12 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace csi5112lec4b.models;
 public class Todo {
-    public string Id { get; set; }
+    [BsonId][BsonRepresentation(BsonType.ObjectId)]
+    public string? Id { get; set; }
+
+    [BsonElement("AnotherName")]
     public string Name { get; set; }
     public string Description { get; set; }
     public bool IsComplete { get; set; }

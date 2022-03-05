@@ -1,47 +1,45 @@
 using csi5112lec4b.models;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 namespace csi5112lec4b.services;
 public class TodoService {
-    // Data placeholder
-    private List<Todo> todos = new List<Todo> () {
-        new Todo("1", "Complete service project", "Work 2 days to finish this project", false),
-        new Todo("2", "Bing watch series", "Finish series ... over the weekend", false),
-        new Todo("3", "Exercise", "Finish 30 min of exercise", false)
-    };
+    private readonly IMongoCollection<Todo> _todos;
 
-    public TodoService() {
+
+    public TodoService(IOptions<TodoDatabaseSettings> todoDatabaseSettings) {
+        var settings = MongoClientSettings.FromConnectionString(todoDatabaseSettings.Value.ConnectionString);
+        settings.ServerApi = new ServerApi(ServerApiVersion.V1);
+        var client = new MongoClient(settings);
+        var database = client.GetDatabase(todoDatabaseSettings.Value.DatabaseName);
+        _todos = database.GetCollection<Todo>(todoDatabaseSettings.Value.TodoCollectionName);
     }
 
     public async Task CreateAsync(Todo newTodo) {
-        todos.Add(newTodo);
+        newTodo.Id = null; // will be set by Mongo
+        await _todos.InsertOneAsync(newTodo);
     }
 
+    // Get all Todos
     public async Task<List<Todo>> GetAsync() {
-        return todos;
+        return await _todos.Find(_ => true).ToListAsync();
     }
 
+    // Get a Todo with a specified Id
     public async Task<Todo> GetAsync(string Id) {
-        return todos.Find(x => x.Id == Id);
+        return await _todos.Find<Todo>(todo => todo.Id == Id).FirstOrDefaultAsync();
     }
 
+    // Update a Todo with a specified Id
     public async Task<bool> UpdateAsync(string Id, Todo updatedTodo) {
-        bool result = false;
-        int index = todos.FindIndex(x => x.Id == Id);
-        if (index != -1) {
-            updatedTodo.Id = Id;
-            todos[index] = updatedTodo;
-            result = true;
-        }
-        return result;
+        ReplaceOneResult r = await _todos.ReplaceOneAsync(todo => todo.Id == updatedTodo.Id, updatedTodo);
+        return r.IsModifiedCountAvailable && r.ModifiedCount == 1;
     }
 
+    // Delete a Todo with a specidied Id
     public async Task<bool> DeleteAsync(string Id) {
-        bool deleted = false;
-        int index = todos.FindIndex(x => x.Id == Id);
-        if (index != -1) {
-            todos.RemoveAt(index);
-            deleted = true;
-        }
-        return deleted;
+        DeleteResult r = await _todos.DeleteOneAsync(todo => todo.Id == Id);
+        return r.DeletedCount == 1;
     }
+
 }
