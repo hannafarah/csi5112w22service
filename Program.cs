@@ -28,8 +28,12 @@ builder.Services.Configure<TodoDatabaseSettings>(
                 builder.Configuration.GetSection(nameof(TodoDatabaseSettings)));
 
 // Add our services for DI
-var options = builder.Configuration.GetSection(nameof(TodoDatabaseSettings)).Get<TodoDatabaseSettings>();
-builder.Services.AddSingleton<TodoDatabaseSettings>(options);
+TodoDatabaseSettings options = builder.Configuration.GetSection(nameof(TodoDatabaseSettings)).Get<TodoDatabaseSettings>();
+// override connection string from environment variables, you can also do the same for the rest
+string connection_string = builder.Configuration.GetValue<string>("CONNECTION_STRING");
+if (!string.IsNullOrEmpty(connection_string)) {
+    options.ConnectionString = connection_string;
+}
 
 builder.Services.AddSingleton<TodoService>();
 
