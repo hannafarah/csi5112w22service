@@ -8,8 +8,13 @@ public class TodoService {
     private readonly IMongoCollection<Todo> _todos;
 
 
-    public TodoService(IOptions<TodoDatabaseSettings> todoDatabaseSettings) {
-        var settings = MongoClientSettings.FromConnectionString(todoDatabaseSettings.Value.ConnectionString);
+    public TodoService(IOptions<TodoDatabaseSettings> todoDatabaseSettings, IConfiguration configuration) {
+        string connection_string = configuration.GetValue<string>("CONNECTION_STRING");
+        if (string.IsNullOrEmpty(connection_string)) {
+            // default - should not be used
+            connection_string = todoDatabaseSettings.Value.ConnectionString;
+        }
+        var settings = MongoClientSettings.FromConnectionString(connection_string);
         settings.ServerApi = new ServerApi(ServerApiVersion.V1);
         var client = new MongoClient(settings);
         var database = client.GetDatabase(todoDatabaseSettings.Value.DatabaseName);
